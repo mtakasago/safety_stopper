@@ -11,12 +11,13 @@ SafetyStopper::SafetyStopper():Node("safety_stopper_node")
     //subscriber
     sub_laser_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
             "scan",
-            rclcpp::QoS(1).reliable(),
+            rclcpp::QoS(1).best_effort(),
             std::bind(&SafetyStopper::laser_callback,this,std::placeholders::_1));
 }
 
 void SafetyStopper::laser_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg)
 {
+    std::cout<<"get laser"<<std::endl;
     auto flag = std_msgs::msg::Bool();
     for(auto& range : msg->ranges)
     {
@@ -35,6 +36,6 @@ int main(int argc, char** argv)
     SafetyStopper safety_stopper;
     auto node = std::make_shared<SafetyStopper>();
     rclcpp::spin(node);
-    rcl::shutdown();
+    rclcpp::shutdown();
     return 0;
 }
